@@ -1,0 +1,49 @@
+project_name: lazydocs
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - id: lazydocs
+    main: ./cmd/lazydocs
+    binary: lazydocs
+    env:
+      - CGO_ENABLED=1
+    flags:
+      - -tags=sqlite_fts5
+    goos:
+      - linux
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w
+      - -X main.version={{.Version}}
+
+archives:
+  - id: lazydocs
+    format: tar.gz
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    files:
+      - README.md
+      - LICENSE
+
+checksum:
+  name_template: 'checksums.txt'
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
+      - '^chore:'
+
+release:
+  github:
+    owner: lazydocs
+    name: lazydocs
+  draft: false
+  prerelease: auto

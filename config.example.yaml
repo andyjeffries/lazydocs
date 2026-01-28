@@ -1,0 +1,20 @@
+# LazyDocs Configuration
+# Copy to ~/.config/lazydocs/config.yaml
+
+# Theme for markdown rendering
+# Options: "dark", "light", "dracula", "notty", "auto"
+theme: dark
+
+# Docsets to show by default (optional)
+# default_docsets:
+#   - javascript
+#   - go
+
+# UI settings
+ui:
+  # Show debug info (mode indicator) in status bar
+  show_debug: false
+
+  # Custom colors (optional, hex format)
+  # primary_color: "#9966ff"
+  # secondary_color: "#666666"
