@@ -131,10 +131,14 @@ func (m Model) viewMainContent() string {
 func (m Model) viewResults(width, height int) string {
 	var lines []string
 
-	// Title - show "Global Search" if searching across all docsets
+	// Title - show search type
 	title := "Results"
 	if m.mode == ModeSearch && m.searchInput.Value() != "" {
-		title = "Search: " + m.searchInput.Value()
+		if m.globalSearch {
+			title = "Global: " + m.searchInput.Value()
+		} else {
+			title = "Search: " + m.searchInput.Value()
+		}
 	}
 	lines = append(lines, titleStyle.Render(title))
 	lines = append(lines, "")
@@ -240,7 +244,8 @@ func (m Model) viewStatusBar() string {
 
 	// Right side: key hints
 	keyHints := []string{
-		statusKeyStyle.Render("/") + statusTextStyle.Render("search"),
+		statusKeyStyle.Render("s") + statusTextStyle.Render("search"),
+		statusKeyStyle.Render("/") + statusTextStyle.Render("global"),
 		statusKeyStyle.Render("a") + statusTextStyle.Render("add"),
 		statusKeyStyle.Render("d") + statusTextStyle.Render("delete"),
 		statusKeyStyle.Render("?") + statusTextStyle.Render("help"),
@@ -275,7 +280,7 @@ func (m Model) viewHelp() string {
  Navigation
  ──────────────────────────────────────
  j/k, ↑/↓      Move selection up/down
- h/l, ←/→      Switch docset tabs
+ h/l, ←/→      Switch panes / docsets
  Tab           Cycle panes forward
  Shift-Tab     Cycle panes backward
  Enter         Select / view in preview
@@ -286,13 +291,14 @@ func (m Model) viewHelp() string {
 
  Actions
  ──────────────────────────────────────
- /             Search current docset
+ s             Search current docset
+ /             Search all docsets (global)
  a             Add docset
  d             Delete selected docset
  u             Update selected docset
  ?             Toggle help
  q, Ctrl+c     Quit
- Esc           Close modal / cancel
+ Esc           Close modal / clear search
 
  Press ? or Esc to close this help
 `

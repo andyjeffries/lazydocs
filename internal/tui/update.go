@@ -240,8 +240,21 @@ func (m Model) updateNormal(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 
 	case key.Matches(msg, keys.Search):
 		m.mode = ModeSearch
+		m.globalSearch = true
 		m.searchInput.SetValue("")
-		m.searchInput.Focus() // Don't use the returned command
+		m.searchInput.Placeholder = "Search all docsets..."
+		m.searchInput.Focus()
+		return m, nil
+
+	case key.Matches(msg, keys.LocalSearch):
+		if m.currentDocset() == nil {
+			return m, nil // No docset to search
+		}
+		m.mode = ModeSearch
+		m.globalSearch = false
+		m.searchInput.SetValue("")
+		m.searchInput.Placeholder = "Search current docset..."
+		m.searchInput.Focus()
 		return m, nil
 
 	case key.Matches(msg, keys.Add):
@@ -409,7 +422,11 @@ func (m Model) updateSearch(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	// Real-time search
 	query := m.searchInput.Value()
 	if query != "" && m.app != nil {
-		cmds = append(cmds, m.doGlobalSearch(query))
+		if m.globalSearch {
+			cmds = append(cmds, m.doGlobalSearch(query))
+		} else {
+			cmds = append(cmds, m.doLocalSearch(query))
+		}
 	} else if m.app != nil {
 		// Empty query - reload current docset entries
 		if ds := m.currentDocset(); ds != nil {
@@ -569,6 +586,23 @@ func (m Model) doGlobalSearch(query string) tea.Cmd {
 
 		// Search across ALL docsets (empty docset/version = global)
 		results, err := m.app.Search(query, "", "", 100)
+		return searchResultsMsg{results: results, err: err}
+	}
+}
+
+func (m Model) doLocalSearch(query string) tea.Cmd {
+	return func() tea.Msg {
+		if m.app == nil {
+			return searchResultsMsg{err: nil}
+		}
+
+		ds := m.currentDocset()
+		if ds == nil {
+			return searchResultsMsg{err: nil}
+		}
+
+		// Search only current docset
+		results, err := m.app.Search(query, ds.Name, ds.Version, 100)
 		return searchResultsMsg{results: results, err: err}
 	}
 }
