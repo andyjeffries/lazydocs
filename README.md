@@ -13,19 +13,26 @@ A Lazygit-style TUI for browsing offline DevDocs documentation.
 
 ## Installation
 
+### Homebrew (macOS/Linux)
+
+```bash
+brew tap andyjeffries/lazydocs
+brew install lazydocs
+```
+
 ### From Source
 
 Requires Go 1.21+ with CGO enabled.
 
 ```bash
-git clone https://github.com/lazydocs/lazydocs
+git clone https://github.com/andyjeffries/lazydocs
 cd lazydocs
 make install
 ```
 
 ### Binary Releases
 
-Download from the [releases page](https://github.com/lazydocs/lazydocs/releases).
+Download from the [releases page](https://github.com/andyjeffries/lazydocs/releases).
 
 ## Usage
 
@@ -41,6 +48,9 @@ lazydocs Array.map
 # Install a docset
 lazydocs install javascript
 
+# Search available docsets
+lazydocs search python
+
 # List installed docsets
 lazydocs list
 
@@ -53,7 +63,7 @@ lazydocs remove javascript
 
 ### Neovim
 
-See [lazydocs.nvim](https://github.com/lazydocs/lazydocs.nvim) for Neovim integration.
+See [lazydocs.nvim](https://github.com/andyjeffries/lazydocs.nvim) for Neovim integration.
 
 ## Keybindings
 
@@ -62,7 +72,7 @@ See [lazydocs.nvim](https://github.com/lazydocs/lazydocs.nvim) for Neovim integr
 | Key | Action |
 |-----|--------|
 | `j/k` or `↑/↓` | Move selection up/down |
-| `h/l` or `←/→` | Switch docset tabs |
+| `h/l` or `←/→` | Switch panes / docset tabs |
 | `Tab` | Cycle panes forward |
 | `Shift-Tab` | Cycle panes backward |
 | `Enter` | View in preview pane |
@@ -75,13 +85,14 @@ See [lazydocs.nvim](https://github.com/lazydocs/lazydocs.nvim) for Neovim integr
 
 | Key | Action |
 |-----|--------|
-| `/` | Search current docset |
+| `s` | Search current docset |
+| `/` | Search all docsets (global) |
 | `a` | Add docset |
 | `d` | Delete selected docset |
 | `u` | Update selected docset |
 | `?` | Toggle help |
 | `q` | Quit |
-| `Esc` | Close modal / cancel |
+| `Esc` | Close modal / clear search |
 
 ## Popular Docsets
 
@@ -99,13 +110,29 @@ lazydocs install typescript
 
 ## Configuration
 
-LazyDocs stores data in `~/.local/share/lazydocs/`:
+LazyDocs stores data in `~/.local/share/lazydocs/` and configuration in `~/.config/lazydocs/`:
 
 ```
-lazydocs/
+~/.local/share/lazydocs/
 ├── docs/           # Downloaded docsets
 ├── index.sqlite    # Search index
 └── manifest.json   # Cached docset list
+
+~/.config/lazydocs/
+└── config.yaml     # User configuration
+```
+
+### Config File
+
+Create `~/.config/lazydocs/config.yaml`:
+
+```yaml
+# Theme for markdown rendering: dark, light, dracula, notty
+theme: dark
+
+# UI settings
+ui:
+  show_debug: false
 ```
 
 ## Building
